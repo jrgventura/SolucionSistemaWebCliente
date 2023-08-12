@@ -14,9 +14,9 @@ namespace SistemaWebCliente.Controllers
                     new Uri("https://localhost:7274/api/NegocioApi/");
                 HttpResponseMessage response = await 
                     httpClient.GetAsync("GetClientes");
-                string apirResponse = await response.Content.ReadAsStringAsync();
+                string apiResponse = await response.Content.ReadAsStringAsync();
                 clienteList = JsonConvert.DeserializeObject<List<ClienteModel>>
-                    (apirResponse).Select(
+                    (apiResponse).Select(
                     s => new ClienteModel { 
                         idcliente = s.idcliente,
                         nombre = s.nombre,
