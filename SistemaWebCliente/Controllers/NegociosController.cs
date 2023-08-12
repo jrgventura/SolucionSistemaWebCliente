@@ -28,5 +28,31 @@ namespace SistemaWebCliente.Controllers
             }
             return View(clienteList);
         }
+
+        public async Task<IActionResult> Create() { 
+            return View(await Task.Run(() => new ClienteModel()));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(ClienteModel cliente) {
+            string mensaje = "";
+
+            using (var httpClient = new HttpClient()) {
+                httpClient.BaseAddress =
+                    new Uri("https://localhost:7274/api/NegocioApi/");
+
+                StringContent content = new StringContent(
+                    JsonConvert.SerializeObject(cliente),
+                    System.Text.Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await
+                    httpClient.PostAsync("AddCliente", content);
+
+                mensaje = await response.Content.ReadAsStringAsync();
+            }
+            ViewBag.mensaje = mensaje;
+            return View(cliente);
+        }
+
     }
 }
