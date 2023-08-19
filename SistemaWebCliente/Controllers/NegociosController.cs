@@ -9,15 +9,17 @@ namespace SistemaWebCliente.Controllers
         public async Task<IActionResult> Index()
         {
             List<ClienteModel> clienteList = new List<ClienteModel>();
-            using (var httpClient = new HttpClient()) {
-                httpClient.BaseAddress = 
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress =
                     new Uri("https://localhost:7274/api/NegocioApi/");
-                HttpResponseMessage response = await 
+                HttpResponseMessage response = await
                     httpClient.GetAsync("GetClientes");
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 clienteList = JsonConvert.DeserializeObject<List<ClienteModel>>
                     (apiResponse).Select(
-                    s => new ClienteModel { 
+                    s => new ClienteModel
+                    {
                         idcliente = s.idcliente,
                         nombre = s.nombre,
                         direccion = s.direccion,
@@ -29,15 +31,18 @@ namespace SistemaWebCliente.Controllers
             return View(clienteList);
         }
 
-        public async Task<IActionResult> Create() { 
+        public async Task<IActionResult> Create()
+        {
             return View(await Task.Run(() => new ClienteModel()));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ClienteModel cliente) {
+        public async Task<IActionResult> Create(ClienteModel cliente)
+        {
             string mensaje = "";
 
-            using (var httpClient = new HttpClient()) {
+            using (var httpClient = new HttpClient())
+            {
                 httpClient.BaseAddress =
                     new Uri("https://localhost:7274/api/NegocioApi/");
 
@@ -63,7 +68,7 @@ namespace SistemaWebCliente.Controllers
                 httpClient.BaseAddress =
                     new Uri("https://localhost:7274/api/NegocioApi/");
                 HttpResponseMessage response = await
-                    httpClient.GetAsync("GetClientes/"+id);
+                    httpClient.GetAsync("GetClientes/" + id);
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 cliente = JsonConvert.DeserializeObject<ClienteModel>(apiResponse);
 
@@ -72,7 +77,8 @@ namespace SistemaWebCliente.Controllers
             return cliente;
         }
 
-        public async Task<IActionResult> Edit(int id) {
+        public async Task<IActionResult> Edit(int id)
+        {
             return View(await Task.Run(() => Buscar(id)));
         }
 
@@ -99,5 +105,24 @@ namespace SistemaWebCliente.Controllers
             return View(cliente);
         }
 
+  
+        public async Task<IActionResult> Delete(int id)
+        {
+            string mensaje = "";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress =
+                    new Uri("https://localhost:7274/api/NegocioApi/");
+
+                HttpResponseMessage response = await
+                    httpClient.DeleteAsync($"EliminarCliente?id={id}");
+
+                mensaje = await response.Content.ReadAsStringAsync();
+            }
+            ViewBag.mensaje = mensaje;
+            return RedirectToAction("");
+        }
     }
+
 }
